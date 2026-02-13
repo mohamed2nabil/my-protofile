@@ -63,116 +63,46 @@ window.addEventListener('scroll', () => {
     });
 });
 
-// FIXED: Contact form submission using EmailJS
+// --- التعديل هنا لخدمة EmailJS ---
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('DOM Content Loaded - Initializing EmailJS');
-    
+    // 1. تفعيل المفتاح العام
+    emailjs.init("mfC5t03UXNHKJgp6z"); 
+
     const contactForm = document.querySelector('form');
-    const submitBtn = document.getElementById('submit-btn');
-    const loadingSpinner = document.getElementById('loading-spinner');
-    const successMessage = document.getElementById('success-message');
-    const errorMessage = document.getElementById('error-message');
+    // تأكد أن زر الإرسال له ID اسمه submit-btn في الـ HTML
+    const submitBtn = contactForm.querySelector('button[type="submit"]'); 
 
-    // Validate all elements exist
-    if (!contactForm) {
-        console.error('Contact form not found');
-        return;
-    }
+    if (!contactForm) return;
 
-    // Initialize EmailJS ONCE at page load
-    try {
-        emailjs.init('mfC5t03UXNHKJgp6z');
-        console.log('EmailJS initialized successfully');
-    } catch (error) {
-        console.error('EmailJS initialization failed:', error);
-    }
-
-    // Form submission handler
     contactForm.addEventListener('submit', function(event) {
         event.preventDefault();
-        console.log('Form submitted');
 
-        // Validate form inputs
-        const name = document.getElementById('name');
-        const email = document.getElementById('email');
-        const subject = document.getElementById('subject');
-        const message = document.getElementById('message');
-
-        if (!name || !email || !subject || !message) {
-            console.error('One or more form fields are missing');
-            alert('Error: Form fields are missing');
-            return;
-        }
-
-        // Validate inputs aren't empty
-        if (!name.value.trim() || !email.value.trim() || !subject.value.trim() || !message.value.trim()) {
-            alert('Please fill in all fields');
-            return;
-        }
-
-        // Hide previous messages
-        successMessage.classList.add('hidden');
-        errorMessage.classList.add('hidden');
-
-        // Show loading state
+        // تغيير حالة الزر أثناء الإرسال
+        const originalBtnText = submitBtn.innerHTML;
         submitBtn.disabled = true;
-        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Sending...';
-        loadingSpinner.classList.remove('hidden');
+        submitBtn.innerHTML = 'Sending...';
 
-        // Prepare parameters - EXACT MATCH with your EmailJS template
+        // تجميع البيانات - تأكد أن الأسماء (from_name, etc) مطابقة للقالب عندك
         const templateParams = {
-            from_name: name.value,
-            from_email: email.value,
-            subject: subject.value,
-            message: message.value
+            from_name: document.getElementById('name').value,
+            from_email: document.getElementById('email').value,
+            subject: document.getElementById('subject').value,
+            message: document.getElementById('message').value
         };
 
-        console.log('Sending with params:', templateParams);
-
-        // Send email
+        // إرسال الإيميل
         emailjs.send('service_blzsh87', 'template_bqdqgsp', templateParams)
             .then(function(response) {
                 console.log('SUCCESS!', response.status, response.text);
-
-                // Hide loading state
-                loadingSpinner.classList.add('hidden');
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = 'Send Message <i class="fas fa-paper-plane ml-2"></i>';
-
-                // Show success message
-                successMessage.classList.remove('hidden');
-
-                // Reset form
+                alert('Sent Successfully! / تم الإرسال بنجاح');
                 contactForm.reset();
-
-                // Hide success message after 5 seconds
-                setTimeout(() => {
-                    successMessage.classList.add('hidden');
-                }, 5000);
-
-            }, function(error) {
-                console.error('FAILED!', error);
-                console.error('Error type:', error.status);
-                console.error('Error details:', JSON.stringify(error, null, 2));
-
-                // Hide loading state
-                loadingSpinner.classList.add('hidden');
                 submitBtn.disabled = false;
-                submitBtn.innerHTML = 'Send Message <i class="fas fa-paper-plane ml-2"></i>';
-
-                // Show error message
-                errorMessage.classList.remove('hidden');
-                
-                // Update error message with specific error info
-                const errorText = errorMessage.querySelector('p');
-                if (errorText) {
-                    errorText.textContent = `Error: ${error.status || 'Unknown error'}. Check browser console for details.`;
-                }
-
-                // Hide error message after 5 seconds
-                setTimeout(() => {
-                    errorMessage.classList.add('hidden');
-                }, 5000);
+                submitBtn.innerHTML = originalBtnText;
+            }, function(error) {
+                console.error('FAILED...', error);
+                alert('Failed to send. Error: ' + JSON.stringify(error));
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalBtnText;
             });
     });
 });
