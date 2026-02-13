@@ -124,15 +124,13 @@ document.addEventListener('DOMContentLoaded', function() {
             from_name: name.value,
             from_email: email.value,
             subject: subject.value,
-            message: message.value,
-            to_email: 'mohamed2nabil5@gmail.com',
-            reply_to: email.value
+            message: message.value
         };
 
         console.log('Sending with params:', templateParams);
 
         // Send email
-        emailjs.send('service_i19zdbn', 'template_bqdqgsp', templateParams)
+        emailjs.send('service_blzsh87', 'template_bqdqgsp', templateParams)
             .then(function(response) {
                 console.log('SUCCESS!', response.status, response.text);
 
