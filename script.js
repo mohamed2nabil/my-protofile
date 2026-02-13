@@ -1,4 +1,9 @@
-// Smooth scrolling for navigation links
+/**
+ * Modern Portfolio - Main Script
+ * Created by: Mohamed Nabil
+ */
+
+// 1. Smooth scrolling for navigation links
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function (e) {
         e.preventDefault();
@@ -12,7 +17,7 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     });
 });
 
-// Mobile menu toggle
+// 2. Mobile menu toggle logic
 const menuToggle = document.getElementById('menu-toggle');
 const mobileMenu = document.getElementById('mobile-menu');
 
@@ -22,7 +27,7 @@ if (menuToggle && mobileMenu) {
     });
 }
 
-// Back to top button
+// 3. Back to top button functionality
 const backToTopButton = document.getElementById('back-to-top');
 if (backToTopButton) {
     window.addEventListener('scroll', () => {
@@ -41,7 +46,7 @@ if (backToTopButton) {
     });
 }
 
-// Active navigation link highlighting
+// 4. Active navigation link highlighting on scroll
 const sections = document.querySelectorAll('section');
 const navLinks = document.querySelectorAll('.nav-link');
 
@@ -63,26 +68,33 @@ window.addEventListener('scroll', () => {
     });
 });
 
-// --- التعديل هنا لخدمة EmailJS ---
+// 5. Professional Contact Form handling with EmailJS (No Alerts)
 document.addEventListener('DOMContentLoaded', function() {
-    // 1. تفعيل المفتاح العام
+    // تفعيل مفتاح الـ Public Key الخاص بك
     emailjs.init("mfC5t03UXNHKJgp6z"); 
 
-    const contactForm = document.querySelector('form');
-    // تأكد أن زر الإرسال له ID اسمه submit-btn في الـ HTML
-    const submitBtn = contactForm.querySelector('button[type="submit"]'); 
+    const contactForm = document.getElementById('contact-form') || document.querySelector('form');
+    const submitBtn = document.getElementById('submit-btn');
+    const loadingSpinner = document.getElementById('loading-spinner');
+    const successMessage = document.getElementById('success-message');
+    const errorMessage = document.getElementById('error-message');
 
     if (!contactForm) return;
 
     contactForm.addEventListener('submit', function(event) {
         event.preventDefault();
 
-        // تغيير حالة الزر أثناء الإرسال
+        // إخفاء رسائل الحالة السابقة قبل بدء عملية إرسال جديدة
+        successMessage.classList.add('hidden');
+        errorMessage.classList.add('hidden');
+
+        // تجهيز حالة الزر والـ Spinner
         const originalBtnText = submitBtn.innerHTML;
         submitBtn.disabled = true;
         submitBtn.innerHTML = 'Sending...';
+        loadingSpinner.classList.remove('hidden');
 
-        // تجميع البيانات - تأكد أن الأسماء (from_name, etc) مطابقة للقالب عندك
+        // تجميع البيانات من الحقول
         const templateParams = {
             from_name: document.getElementById('name').value,
             from_email: document.getElementById('email').value,
@@ -90,17 +102,33 @@ document.addEventListener('DOMContentLoaded', function() {
             message: document.getElementById('message').value
         };
 
-        // إرسال الإيميل
+        // إرسال الإيميل عبر EmailJS
         emailjs.send('service_blzsh87', 'template_bqdqgsp', templateParams)
             .then(function(response) {
                 console.log('SUCCESS!', response.status, response.text);
-                alert('Sent Successfully! / تم الإرسال بنجاح');
-                contactForm.reset();
+                
+                // إخفاء الـ Spinner وإظهار رسالة النجاح في الصفحة
+                loadingSpinner.classList.add('hidden');
+                successMessage.classList.remove('hidden');
+                
+                // إعادة الزر لحالته الطبيعية وتفريغ الفورم
                 submitBtn.disabled = false;
                 submitBtn.innerHTML = originalBtnText;
+                contactForm.reset();
+
+                // إخفاء رسالة النجاح تلقائياً بعد 6 ثوانٍ
+                setTimeout(() => {
+                    successMessage.classList.add('hidden');
+                }, 6000);
+
             }, function(error) {
                 console.error('FAILED...', error);
-                alert('Failed to send. Error: ' + JSON.stringify(error));
+                
+                // إخفاء الـ Spinner وإظهار رسالة الخطأ في الصفحة
+                loadingSpinner.classList.add('hidden');
+                errorMessage.classList.remove('hidden');
+                
+                // إعادة الزر لحالته الطبيعية للمحاولة مرة أخرى
                 submitBtn.disabled = false;
                 submitBtn.innerHTML = originalBtnText;
             });
