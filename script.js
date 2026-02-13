@@ -68,7 +68,7 @@ window.addEventListener('scroll', () => {
     });
 });
 
-// 5. Professional Contact Form handling with EmailJS (No Alerts)
+// 5. Professional Contact Form handling with EmailJS (NO ALERTS)
 document.addEventListener('DOMContentLoaded', function() {
     // تفعيل مفتاح الـ Public Key الخاص بك
     emailjs.init("mfC5t03UXNHKJgp6z"); 
@@ -84,7 +84,7 @@ document.addEventListener('DOMContentLoaded', function() {
     contactForm.addEventListener('submit', function(event) {
         event.preventDefault();
 
-        // إخفاء رسائل الحالة السابقة قبل بدء عملية إرسال جديدة
+        // إخفاء أي رسائل سابقة
         successMessage.classList.add('hidden');
         errorMessage.classList.add('hidden');
 
@@ -107,11 +107,13 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(function(response) {
                 console.log('SUCCESS!', response.status, response.text);
                 
-                // إخفاء الـ Spinner وإظهار رسالة النجاح في الصفحة
+                // 1. إخفاء الـ Spinner
                 loadingSpinner.classList.add('hidden');
+                
+                // 2. إظهار رسالة النجاح (علامة الصح) الموجودة في الـ HTML
                 successMessage.classList.remove('hidden');
                 
-                // إعادة الزر لحالته الطبيعية وتفريغ الفورم
+                // 3. إعادة الزر لحالته الطبيعية وتفريغ الفورم
                 submitBtn.disabled = false;
                 submitBtn.innerHTML = originalBtnText;
                 contactForm.reset();
@@ -124,11 +126,10 @@ document.addEventListener('DOMContentLoaded', function() {
             }, function(error) {
                 console.error('FAILED...', error);
                 
-                // إخفاء الـ Spinner وإظهار رسالة الخطأ في الصفحة
+                // إخفاء الـ Spinner وإظهار رسالة الخطأ
                 loadingSpinner.classList.add('hidden');
                 errorMessage.classList.remove('hidden');
                 
-                // إعادة الزر لحالته الطبيعية للمحاولة مرة أخرى
                 submitBtn.disabled = false;
                 submitBtn.innerHTML = originalBtnText;
             });
